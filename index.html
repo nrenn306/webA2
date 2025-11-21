@@ -46,64 +46,57 @@
     <article class="hidden" id="singleproduct">
         <div id="breadcrumb">
             <a href="#">Home></a>
-            <a href="#">Gender(replace this)></a>
-            <a href="#">Category(replace this)></a>
-            <span>Product Title</span>
+            <a href="#" id="gender"></a>
+            <a href="#" id="category"></a>
+            <span id="productTitle"></span>
         </div>
-        </article>
-        <section class = "hidden" id="productPage">
-            <section id="productImages">
-                <div id="mainImage">
-                    <img>
-                </div>
-                <div id="smallImages">
-                    <img> 
-                    <img>
-                </div>
-            </section>
 
-            <section class = "hidden" id="productDescription">
+        <section class = "hidden" id="productPage">
+            <template id="productPageTemplate">
+                <img id="productImage">
+            </template>
+        </section>
+
+        <section class = "hidden" id="productDescription">
+            <template id="productDescriptionTemplate">
                 <h1 id="productTitle"></h1>
-                <p id ="productPrice"></p>
-                <p id="productDescription"></p>
+                <p id="productPrice"></p>
+                <p id="productDescriptionText"></p>
                 <p id="productMaterial"></p>
 
                 <div id="quantity">
                     <label>Quantity</label>
-                    <input> <!-- increase decrease prices based on click here -->
+                    <input type="number" id="qtyInput" min="1" value="1">
                 </div>
 
-                <div id="colourOptions">
-                    <!-- grab colour options from data to put here hehe
-                    <button class="productColour" style=backgroundColour></button>
-                    -->
-                </div>
-                <button id="addCart">+Add to Cart</button>
-            </section>
+                <div id="colourOptions"></div>
 
-            <section id="relatedProducts">
-                <h2>Related Products</h2>
-
-                <ul id="relatedList">
-                    <!-- grab images to put here hehe 
-                    <li> 
-                    <img>
-                    <h3>title
-                    <p>price
-                    <button>+
-                    </li>
-                    -->
-                </ul>
-            </section>
-
+                <button id="addCart">+ Add to Cart</button>
+            </template>
         </section>
+
+        <section id="relatedProducts">
+            <h2>Related Products</h2>
+
+            <ul id="relatedList">
+                <template id="relatedProductTemplate">
+                    <li class="relatedCard">
+                        <img class="relatedImage">
+                        <h3 class="relatedTitle"></h3>
+                        <p class="relatedPrice"></p>
+                        <button class="relatedAdd">+</button>
+                    </li>
+                </template>
+            </ul>
+        </section>
+
     </article>
     
     <article class="hidden" id="shoppingCart">
         <h1>Shopping Cart</h1>
         <section class="cartItems">
             <table class="cartTable">
-                <thread>
+                <thead>
                     <tr>
                         <th>Items</th>
                         <th>Color</th>
@@ -112,10 +105,30 @@
                         <th>Quantity</th>
                         <th>Subtotal</th>
                     </tr>
-                </thread>
+                </thead>
                 <tbody id="cartBody">
-                    <!--loop through cart items, display image of item, product title, colour, size, quanity, subtotal -->
-                    <!-- use td-->
+                    <template id="cartItemTemplate">
+                        <tr class="cartRow">
+                            
+                            <td class="cartItem">
+                                <img class="cartItemImage">
+                                <span class="cartItemTitle"></span>
+                            </td>
+
+                            <td class="cartItemColor"></td>
+
+                            <td class="cartItemSize"></td>
+
+                            <td class="cartItemPrice"></td>
+
+                            <td class="cartItemQuantity">
+                                <input type="number" class="quantityInput" min="1" value="1">
+                            </td>
+                            
+                            <td class="cartItemSubtotal"></td>
+
+                        </tr>
+                    </template>
                 </tbody>
             </table>
         </section>
@@ -123,12 +136,12 @@
         <section class="shippingSummary">
             <div class="shipping">
                 <h2>Shipping</h2>
-                <select id="shippingType" placeholder="Standard">
+                <select id="shippingMethod" placeholder="Standard">
                     <option value="standard">Standard</option>
                     <option value="express">Express</option>
                     <option value="priority">Priority</option>
                 </select>
-                <select id="shippingType" placeholder="Canada">
+                <select id="shippingLocation" placeholder="Canada">
                     <option value="canada">Canada</option>
                     <option value="unitedStates">United States</option>
                     <option value="international">International</option>
@@ -137,8 +150,15 @@
 
             <div class="summary">
                 <h2>Merchandise</h2>
-                
+                <p id="merchTotal">$0.00</p>
+                <h2>Shipping</h2>
+                <p id="shippingTotal">$0.00</p> 
+                <h2>Tax</h2>
+                <p id="taxTotal">$0.00</p>
+                <h2>Total</h2>
+                <p id="orderTotal">$0.00</p>
             </div>
+            <button id="checkoutButton">Checkout</button>
         </section>
     </article>
 
