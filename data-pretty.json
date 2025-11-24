@@ -1,4 +1,4 @@
-[
+const content = `[
   {
     "id": "P001",
     "name": "Silk Wrap Blouse",
@@ -2713,4 +2713,4 @@
       "total": 251
     }
   }
-]
+]`;

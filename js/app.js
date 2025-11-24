@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const products = JSON.parse(content);
+    
+    // navigation
     const home = document.querySelector("#home");
     const browse = document.querySelector("#browse");
     const about = document.querySelector("#about");
@@ -29,4 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (viewName === "browse") browse.classList.remove("hidden");
         if (viewName === "shoppingCart") shoppingCart.classList.remove("hidden");
     }
+
+    // handling about pop up
+    document.querySelector("#close").addEventListener('click', () => {
+        document.querySelector("#about").close();
+    });
+    document.querySelector("#x").addEventListener('click', () => {
+        document.querySelector("#about").close();
+    });
 });
