@@ -34,12 +34,46 @@
     </article>
 
     <article class="hidden" id="browse">
-        <p>b</p>
-        <section class="hidden" id="filter">
-
+        <section id="filter">
+            <div id="gender">
+                <p>Gender ▼</p>
+                <div class="hidden" id="genderCheckBox">
+                    <input type="checkbox" id="womens" name="womens" value="womens">
+                    <label for="womens">Womens</label>
+                    <input type="checkbox" id="mens" name="mens" value="mens">
+                    <label for="mens">Mens</label>
+                </div>
+            </div>
+            <div id="category">
+                <p>Category ▼</p>
+                <template>
+                    <div class="hidden" id="categoryCheckBox">
+                        <input type="checkbox">
+                        <label for=""></label>
+                    </div>
+                </template>
+            </div>
+            <div id="size">
+                <p>Size ▼</p>
+                <template>
+                    <div class="hidden" id="sizeCheckBox">
+                        <input type="checkbox">
+                        <label for=""></label>
+                    </div>
+                </template>
+            </div>
+            <div id="colors">
+                <p>Colors ▼</p>
+                <template>
+                    <div class="hidden" id="colorsCheckBox">
+                        <input type="checkbox">
+                        <label for=""></label>
+                    </div>
+                </template>
+            </div>
         </section>
 
-        <section class="hidden" id="results">
+        <section id="results">
 
         </section>
     </article>
