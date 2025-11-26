@@ -36,7 +36,7 @@
     <article class="hidden" id="browse">
         <section id="filter">
             <div id="gender">
-                <p>Gender ▼</p>
+                <p>Gender ▲</p>
                 <div class="hidden" id="genderCheckBox">
                     <input type="checkbox" id="womens" name="womens" value="womens">
                     <label for="womens">Womens</label>
@@ -45,16 +45,11 @@
                 </div>
             </div>
             <div id="category">
-                <p>Category ▼</p>
-                <template>
-                    <div class="hidden" id="categoryCheckBox">
-                        <input type="checkbox">
-                        <label for=""></label>
-                    </div>
-                </template>
+                <p>Category ▲</p>
+                    <div class="hidden" id="categoryCheckBox"></div>
             </div>
             <div id="size">
-                <p>Size ▼</p>
+                <p>Size ▲</p>
                 <template>
                     <div class="hidden" id="sizeCheckBox">
                         <input type="checkbox">
@@ -63,7 +58,7 @@
                 </template>
             </div>
             <div id="colors">
-                <p>Colors ▼</p>
+                <p>Colors ▲</p>
                 <template>
                     <div class="hidden" id="colorsCheckBox">
                         <input type="checkbox">
@@ -74,7 +69,32 @@
         </section>
 
         <section id="results">
-
+            <div>
+                <h2>Sort 
+                    <select id="sort">
+                        <option value="nameAZ">A-Z</option>
+                        <option value="nameZA">Z-A</option>
+                        <option value="priceHL">High to low</option>
+                        <option value="priceLH">Low to high</option>
+                        <option value="category">Category</option>
+                    </select>
+                </h2>
+            </div>
+            <div>
+                <h2>Results <button id="clear">Clear All</button> </h2>
+                <div id="selectedFilters">
+                    <!--this is where filters will be added when selected and then cleared when the clear all button is clicked-->
+                </div>
+            </div>
+            <div>
+                <template>
+                    <!---this is where we will create all the result product items based on the filters-->
+                    <img id="productImage" >
+                    <p>Title</p>
+                    <p>$price</p>
+                    <button id="add"></button>
+                </template>
+            </div>
         </section>
     </article>
 
@@ -106,7 +126,7 @@
 
                 <div id="colourOptions"></div>
 
-                <button id="addCart">+ Add to Cart</button>
+                <button id="add">+ Add to Cart</button>
             </template>
         </section>
 
@@ -119,7 +139,7 @@
                         <img class="relatedImage">
                         <h3 class="relatedTitle"></h3>
                         <p class="relatedPrice"></p>
-                        <button class="relatedAdd">+</button>
+                        <button class="add">+</button>
                     </li>
                 </template>
             </ul>
@@ -146,6 +166,7 @@
                         <tr class="cartRow">
                             
                             <td class="cartItem">
+                                <button id="remove"></button>
                                 <img class="cartItemImage">
                                 <span class="cartItemTitle"></span>
                             </td>
