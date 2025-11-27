@@ -10,3 +10,126 @@ header {
     background-color: black;
     color: white;
 }
+
+/* NAVBAR */
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 30px;
+}
+
+#logo img {
+    height: 150px;
+    width: auto;
+}
+
+#navigation ul {
+    list-style: none;
+    display: flex;
+    gap: 50px;
+    margin: 0;
+    padding: 0;
+}
+
+#navigation ul li {
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+#navigation ul li:hover {
+    color: #5d5d5d;
+}
+
+nav > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 18px;
+}
+
+.cart-count {
+    background: rgb(113, 111, 111);
+    color: white;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* HERO SECTION */
+.hero {
+    background-image: url("../storeFront.jpg"); 
+    background-size: cover;
+    background-position: center;
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: rgb(255, 255, 255);
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    letter-spacing: 1px;
+}
+
+.hero-content button {
+    padding: 12px 28px;
+    border: none;
+    margin-top: 15px;
+    background: black;
+    color: white;
+    cursor: pointer;
+}
+
+
+/* FEATURED CATEGORIES
+still need to add photos here...*/
+.featured-categories {
+    padding: 10px 0;
+    text-align: center;
+}
+
+.category-grid {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.category-card img {
+    width: 250px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.category-card img:hover {
+    transform: scale(1.03);
+}
+
+
+/* FEATURED PRODUCTS */
+.featured-products {
+    padding: 10px 0;
+    text-align: center;
+}
+
+.product-grid {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+
+.product-card img {
+    width: 200px;
+    border-radius: 8px;
+}
+
