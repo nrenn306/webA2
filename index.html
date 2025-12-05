@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assignment 2</title>    
     <link rel="stylesheet" type="text/css" href="css/ass2.css" />
     
@@ -60,6 +60,11 @@
             <h2>Featured Products</h2>
             <div class="product-grid">
                 <div class="product-card">
+                    <img src="images/top.jpg" alt="Top">
+                    <p>Basic T-Shirt</p>
+                    <span>$19</span>
+                </div>
+                <div class="product-card">
                     <img src="images/jacket.jpg" alt="Jacket">
                     <p>Jean Jacket</p>
                     <span>$129</span>
@@ -70,10 +75,11 @@
                     <span>$79</span>
                 </div>
                 <div class="product-card">
-                    <img src="images/shirt.jpg" alt="Shirt">
+                    <img src="images/shirt.jpg" alt="Button up">
                     <p>Button Up Tee</p>
                     <span>$39</span>
                 </div>
+                
             </div>
         </section>
     </article>
@@ -84,10 +90,14 @@
             <div id="gender">
                 <p>Gender ▲</p>
                 <div class="hidden" id="genderCheckBox">
-                    <input type="checkbox" class="gender" id="womens" name="womens" value="womens">
-                    <label for="womens">Womens</label>
-                    <input type="checkbox" class="gender" id="mens" name="mens" value="mens">
-                    <label for="mens">Mens</label>
+                    <div class="filter-item">
+                        <input type="checkbox" class="gender" id="womens" name="womens" value="womens">
+                        <label for="womens">Womens</label>
+                    </div>
+                    <div class="filter-item">
+                        <input type="checkbox" class="gender" id="mens" name="mens" value="mens">
+                        <label for="mens">Mens</label>
+                    </div>
                 </div>
             </div>
             <div id="category">
@@ -124,10 +134,18 @@
             </div>
             <template>
                 <!---this is where we will create all the result product items based on the filters-->
-                <img class="productImage" src="https://placehold.co/150x200">
-                <p class="browseResultProductTitle"></p>
-                <p class="browseResultProductPrice"></p>
-                <button class="addBtn">Add</button>
+                <div class="productCard">
+                    <img class="productImage" src="https://placehold.co/150x200">
+                    <p class="browseResultProductTitle"></p>
+                    <p class="browseResultProductPrice"></p>
+                    <select class="sizeSelect">
+                        <option value="">Select Size</option>
+                    </select>
+                    <select class="colorSelect">
+                        <option value="">Select Color</option>
+                    </select>
+                    <button class="addBtn">Add</button>
+                </div>
             </template>
             <div id="browseResults"></div>
         </section>

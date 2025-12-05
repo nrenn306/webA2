@@ -62,6 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
         categories.sort();
         
         for (let c of categories) {
+            const filterItem = document.createElement("div");
+            filterItem.classList.add("filter-item");
+            
             const input = document.createElement("input");
             input.type = "checkbox";
             input.classList.add("category");
@@ -74,8 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
             label.textContent = c;
             label.setAttribute("for", c);
 
-            categoryCheckBox.appendChild(input);
-            categoryCheckBox.appendChild(label);
+            filterItem.appendChild(input);
+            filterItem.appendChild(label);
+            categoryCheckBox.appendChild(filterItem);
         }
     }
 
@@ -98,6 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         for (let s of sizes) {
+            const filterItem = document.createElement("div");
+            filterItem.classList.add("filter-item");
+            
             const input = document.createElement("input");
             input.type = "checkbox";
             input.classList.add("size");
@@ -110,8 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
             label.textContent = s;
             label.setAttribute("for", s);
 
-            sizeCheckBox.appendChild(input);
-            sizeCheckBox.appendChild(label);
+            filterItem.appendChild(input);
+            filterItem.appendChild(label);
+            sizeCheckBox.appendChild(filterItem);
         }
     }
 
@@ -147,6 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (let c of colors) {
             //console.log(c);
+            const filterItem = document.createElement("div");
+            filterItem.classList.add("filter-item");
+            
             const input = document.createElement("input");
             input.type = "checkbox";
             input.classList.add("color");
@@ -160,15 +171,14 @@ document.addEventListener('DOMContentLoaded', () => {
             label.setAttribute("for", c.name);
 
             const div = document.createElement("div");
+            div.className = "colorSwatch";
             div.style.backgroundColor = c.hex;
-            div.style.height = "20px";
-            div.style.width = "20px";
-            div.style.border = "1px solid black";
             div.setAttribute("for", c.name);
 
-            colorsCheckBox.appendChild(input);
-            colorsCheckBox.appendChild(label);
+            filterItem.appendChild(input);
+            filterItem.appendChild(label);
             label.appendChild(div);
+            colorsCheckBox.appendChild(filterItem);
         }
     }
 
@@ -292,7 +302,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        console.log(results);
         populateBrowsePage(results);
         
     }
@@ -343,6 +352,24 @@ document.addEventListener('DOMContentLoaded', () => {
             title.textContent = d.name;
             title.id = d.id;
 
+            const colorSelect = clone.querySelector(".colorSelect");
+            colorSelect.innerHTML = `<option value="">Select Color</option>`;
+            d.color.forEach(c => {
+                const option = document.createElement("option");
+                option.value = c.name;
+                option.textContent = c.name; 
+                colorSelect.appendChild(option);
+            });
+
+            const sizeSelect = clone.querySelector(".sizeSelect");
+            sizeSelect.innerHTML = `<option value="">Select size</option>`;
+            d.sizes.forEach(size => {
+                const option = document.createElement("option");
+                option.value = size;
+                option.textContent = size;
+                sizeSelect.appendChild(option);
+            });
+
             const price = clone.querySelector(".browseResultProductPrice");
             price.textContent = "$" + d.price;
             price.id = d.id;
@@ -350,12 +377,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = clone.querySelector(".addBtn");
 
             parent.appendChild(clone);
-
+    
             button.addEventListener('click', () => {
-                addToCart(d);
-                updateCart();
-            
+                const selectedSize = sizeSelect.value;
+                const selectedColor = colorSelect.value;
+                addToCart(d, selectedSize, selectedColor);
+
+                sizeSelect.value = "";
+                colorSelect.value = "";
             });
+
             parent.addEventListener('click', (e) => showSingleProduct(e, data));
         }
     }
@@ -422,21 +453,34 @@ document.addEventListener('DOMContentLoaded', () => {
     //everything shopping cart 
     let cart = [];
 
-    function addToCart(product) {
+    function addToCart(product, selectedSize, selectedColor) {
+        if (!selectedSize || !selectedColor) {
+            alert("Please select a size and a color.");
+            return;
+        }
+
         let exists = false;
         let productId = product.id;
-        console.log(productId);
-        for(let i=0; i < cart.length; i++) {
-            if(cart[i].id === productId) {
+
+        for (let i = 0; i < cart.length; i++) {
+
+            if (
+                cart[i].id === productId &&
+                cart[i].selectedSize === selectedSize &&
+                cart[i].selectedColor === selectedColor
+            ) {
                 cart[i].quantity++;
                 exists = true;
                 break;
             }
         }
-        
+
         if (!exists) {
+            // Create a copy of the product so original data isn't mutated
             let newProduct = JSON.parse(JSON.stringify(product));
             newProduct.quantity = 1;
+            newProduct.selectedSize = selectedSize;
+            newProduct.selectedColor = selectedColor;
             cart.push(newProduct);
         }
 
@@ -465,7 +509,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (cart.length === 0) {
             const newRow = document.createElement("tr");
-            newRow.innerHTML = "<td colspan='6' style='text-align:center; padding:20px;'> Your cart is empty </td>"; // ADD STYLING IN CSS THIS IS FOR TESTING
+            const td = document.createElement("td");
+            td.colSpan = 6;
+            td.className = "emptyCartMessage";
+            td.textContent = "Your cart is empty";
+            newRow.appendChild(td);
             cartBody.appendChild(newRow);
             updateCartTotal();
             return;
@@ -481,18 +529,11 @@ document.addEventListener('DOMContentLoaded', () => {
             clone.querySelector(".cartItemPrice").textContent = "$" + item.price.toFixed(2);
 
             const colorColumn = clone.querySelector(".cartItemColor");
-            if (item.color && item.color.length > 0) {
-                colorColumn.textContent = item.color[0].name;
-            } else {
-                colorColumn.textContent = "-";
-            }
+            colorColumn.textContent = item.selectedColor;
 
             const sizeColumn = clone.querySelector(".cartItemSize");
-            if (item.size && item.sizes.length > 0) {
-                sizeColumn.textContent  = item.sizes[0];
-            } else {
-                sizeColumn.textContent = "-";
-            }
+            sizeColumn.textContent = item.selectedSize;
+        
 
             const quantityInput = clone.querySelector(".quantityInput");
             quantityInput.value = item.quantity;
@@ -515,13 +556,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const removeBtn = clone.querySelector(".removeBtn");
-
             removeBtn.dataset.id = item.id;
+            removeBtn.dataset.size = item.selectedSize;
 
             removeBtn.addEventListener("click", function(e) {
-                const productDelete = e.target.dataset.id;
-                const index = cart.findIndex(product => product.id == productDelete);
+                const productId = e.target.dataset.id;
+                const productSize = e.target.dataset.size;
 
+                const index = cart.findIndex(p => p.id === productId && p.selectedSize === productSize);
                 if (index !== -1) {
                     cart.splice(index, 1);
                     updateCart();
@@ -561,18 +603,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (total > 500) {
             shippingCost = 0
-        } else {
+        } else if (total > 0) {
             const rates = {
                 standard:  { canada: 10, unitedStates: 15, international: 20 },
                 express:   { canada: 25, unitedStates: 25, international: 30 },
                 priority:  { canada: 35, unitedStates: 50, international: 50 }
             };
 
-            if(total > 500) {
-                shippingCost = 0;
-            } else if (total > 0) {
-                shippingCost = rates[shippingMethod][shippingLocation];
-            } 
+            shippingCost = rates[shippingMethod][shippingLocation];
+
         }
 
         if (shippingLocation === "canada") {
