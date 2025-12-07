@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 return response.json();
             } else {
-                throw new Error("fetch failed");
+                throw new error("fetch failed");
             }
         })
         .then(data => {
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // toggles triangle for browse filter 
-    function toggleTriangle(name) {
+    function toggleTriagngle(name) {
         const p = document.querySelector("#" + name + " p");
         p.textContent = p.textContent.endsWith('▲')
             ? p.textContent.replace('▲', '▼')
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         categoryCheckBox.innerHTML = "";
 
-        toggleTriangle("category");
+        toggleTriagngle("category");
 
         const categories = [];
         for (let product of data) {
@@ -62,9 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
         categories.sort();
         
         for (let c of categories) {
-            const filterItem = document.createElement("div");
-            filterItem.classList.add("filter-item");
-            
             const input = document.createElement("input");
             input.type = "checkbox";
             input.classList.add("category");
@@ -77,9 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
             label.textContent = c;
             label.setAttribute("for", c);
 
-            filterItem.appendChild(input);
-            filterItem.appendChild(label);
-            categoryCheckBox.appendChild(filterItem);
+            categoryCheckBox.appendChild(input);
+            categoryCheckBox.appendChild(label);
         }
     }
 
@@ -90,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sizeCheckBox.innerHTML = "";
 
-        toggleTriangle("size");
+        toggleTriagngle("size");
 
         const sizes = [];
         for (let product of data) {
@@ -102,9 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         for (let s of sizes) {
-            const filterItem = document.createElement("div");
-            filterItem.classList.add("filter-item");
-            
             const input = document.createElement("input");
             input.type = "checkbox";
             input.classList.add("size");
@@ -117,15 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
             label.textContent = s;
             label.setAttribute("for", s);
 
-            filterItem.appendChild(input);
-            filterItem.appendChild(label);
-            sizeCheckBox.appendChild(filterItem);
+            sizeCheckBox.appendChild(input);
+            sizeCheckBox.appendChild(label);
         }
-    }
-
-    // sort sizes 
-    function sortSize(sizes) {
-        
     }
 
     // populates color filter 
@@ -135,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         colorsCheckBox.innerHTML = "";
 
-        toggleTriangle("colors");
+        toggleTriagngle("colors");
 
         const colors = [];
         for (let product of data) {
@@ -154,10 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         for (let c of colors) {
-            //console.log(c);
-            const filterItem = document.createElement("div");
-            filterItem.classList.add("filter-item");
-            
             const input = document.createElement("input");
             input.type = "checkbox";
             input.classList.add("color");
@@ -171,14 +154,15 @@ document.addEventListener('DOMContentLoaded', () => {
             label.setAttribute("for", c.name);
 
             const div = document.createElement("div");
-            div.className = "colorSwatch";
             div.style.backgroundColor = c.hex;
+            div.style.height = "20px";
+            div.style.width = "20px";
+            div.style.border = "1px solid black";
             div.setAttribute("for", c.name);
 
-            filterItem.appendChild(input);
-            filterItem.appendChild(label);
+            colorsCheckBox.appendChild(input);
+            colorsCheckBox.appendChild(label);
             label.appendChild(div);
-            colorsCheckBox.appendChild(filterItem);
         }
     }
 
@@ -187,24 +171,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.nodeName == "P") {
                 if (e.target.textContent.includes("Gender")) {
                     document.querySelector("#genderCheckBox").classList.toggle("hidden");
-                    toggleTriangle("gender")
+                    toggleTriagngle("gender")
                 } else if (e.target.textContent.includes("Category")) {
                     populateCategoryFilter(data);
                 } else if (e.target.textContent.includes("Size")) {
                     populateSizeFilter(data);
                 } else if (e.target.textContent.includes("Colors")) {
                     populateColorsFilter(data);
-                } 
+                }
             }
     }
 
-    const home = document.querySelector("#home");
-    const browse = document.querySelector("#browse");
-    const about = document.querySelector("#about");
-    const shoppingCart = document.querySelector("#shoppingCart");
-
     // navigation
     function navigationHandler(e) {
+        const home = document.querySelector("#home");
+        const browse = document.querySelector("#browse");
+        const about = document.querySelector("#about");
+        const shoppingCart = document.querySelector("#shoppingCart");
+        
         document.querySelector("#singleProduct").classList.add("hidden");
 
         if(e.target.nodeName == "IMG") {
@@ -217,8 +201,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (clickedNav === "Home") {showView("home"); return;}
             if (clickedNav === "Browse") {showView("browse"); return;}
             if (clickedNav === "About") {document.querySelector("#about").showModal(); return;}
-        } else if (e.target.nodeName == "H3" || e.target.id === "cartCount") {
+        } else if (e.target.nodeName == "H3" || e.target.nodeName == "DIV") {
             showView("shoppingCart");
+            updateCart();
         }
     }
 
@@ -352,43 +337,24 @@ document.addEventListener('DOMContentLoaded', () => {
             title.textContent = d.name;
             title.id = d.id;
 
-            const colorSelect = clone.querySelector(".colorSelect");
-            colorSelect.innerHTML = `<option value="">Select Color</option>`;
-            d.color.forEach(c => {
-                const option = document.createElement("option");
-                option.value = c.name;
-                option.textContent = c.name; 
-                colorSelect.appendChild(option);
-            });
-
-            const sizeSelect = clone.querySelector(".sizeSelect");
-            sizeSelect.innerHTML = `<option value="">Select size</option>`;
-            d.sizes.forEach(size => {
-                const option = document.createElement("option");
-                option.value = size;
-                option.textContent = size;
-                sizeSelect.appendChild(option);
-            });
-
             const price = clone.querySelector(".browseResultProductPrice");
             price.textContent = "$" + d.price;
             price.id = d.id;
 
+            const selected = displayColorAndSizeSelection(d, clone.querySelector(".browseColorOptions"), clone.querySelector(".browseSizeOptions"));
+
             const button = clone.querySelector(".addBtn");
 
             parent.appendChild(clone);
-    
-            button.addEventListener('click', () => {
-                const selectedSize = sizeSelect.value;
-                const selectedColor = colorSelect.value;
+
+            button.onclick = () => {
+                const selectedColor = selected.getColor();
+                const selectedSize = selected.getSize();
                 addToCart(d, selectedSize, selectedColor);
-
-                sizeSelect.value = "";
-                colorSelect.value = "";
-            });
-
-            
+            };
         }
+
+        parent.addEventListener('click', (e) => showSingleProduct(e, data));
     }
 
     function clearFilter(data) {
@@ -404,56 +370,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showSingleProduct(e, data) {
-
-        const hasClass = e.target.classList && e.target.classList.contains("browseResultProductTitle");
-
-        if (e.target.nodeName == "IMG" || hasClass) {
+        if (e.target.nodeName == "IMG" || e.target.classList.contains("browseResultProductTitle")) {
             document.querySelector("#browse").classList.add("hidden");
             document.querySelector("#singleProduct").classList.remove("hidden");
 
             const id = e.target.id;
 
-            const productData = data.find(p => p.id == id);
+            const found = data.find(p => p.id == id);
 
-            document.querySelector("#genderBC").textContent = productData.gender;
-            document.querySelector("#categoryBC").textContent = " > " + productData.category;
-            document.querySelector("#productName").textContent = " > " + productData.name;
+            document.querySelector("#genderBC").textContent = found.gender;
+            document.querySelector("#categoryBC").textContent = " > " + found.category;
+            document.querySelector("#productName").textContent = " > " + found.name;
 
-            document.querySelector("#productImage").alt = productData.name;
+            document.querySelector("#productImage").alt = found.name;
 
-            document.querySelector("#productTitle").textContent = productData.name;
-            document.querySelector("#productPrice").textContent = "$" + productData.price;
-            document.querySelector("#productDescriptionText").textContent = productData.description;
-            document.querySelector("#productMaterial").textContent = productData.material;
+            document.querySelector("#productTitle").textContent = found.name;
+            document.querySelector("#productPrice").textContent = "$" + found.price;
+            document.querySelector("#productDescriptionText").textContent = found.description;
+            document.querySelector("#productMaterial").textContent = found.material;
 
-            const colorSelect = document.querySelector("#colorSelect");
-            const sizeSelect = document.querySelector("#sizeSelect");
 
-            colorSelect.innerHTML = `<option value="">Select Color</option>`;
-            productData.color.forEach (c=> {
-                const option = document.createElement("option");
-                option.value = c.name;
-                option.textContent = c.name;
-                colorSelect.appendChild(option);
-            });
+            const selected = displayColorAndSizeSelection(found, document.querySelector("#colorOptions"), document.querySelector("#sizeOptions"));
 
-            sizeSelect.innerHTML = `<option value="">Select Size</option>`;
-            productData.sizes.forEach(s => {
-                const option = document.createElement("option");
-                option.value = s;
-                option.textContent = s; 
-                sizeSelect.appendChild(option);
-            });
-
-            document.querySelector("#singleAddBtn").addEventListener('click', () => {
-                const selectedSize = document.querySelector("#sizeSelect").value;
-                const selectedColor = document.querySelector("#colorSelect").value;
+            document.querySelector("#singleAddBtn").onclick = () => {
+                const selectedColor = selected.getColor();
+                const selectedSize = selected.getSize();
                 const selectedQuantity = parseInt(document.querySelector("#qtyInput").value);
-
-                if (!selectedSize || !selectedColor) {
-                    alert("Please select a size and a color.");
-                    return;
-                }
 
                 if (selectedQuantity <= 0) {
                     alert("Please enter a valid quantity.");
@@ -461,14 +403,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 for (let i = 0; i < selectedQuantity; i++) {
-                    addToCart(productData, selectedSize, selectedColor);
+                    addToCart(found, selectedSize, selectedColor);
                 }
-                document.querySelector("#sizeSelect").value = "";
-                document.querySelector("#colorSelect").value = "";
                 document.querySelector("#qtyInput").value = "1";
-            });
+            };
 
-            loadRelatedProducts(productData, data);
+            loadRelatedProducts(found, data);
         }
     }
 
@@ -492,105 +432,155 @@ document.addEventListener('DOMContentLoaded', () => {
         related.forEach(product=> {
             const clone = template.content.cloneNode(true);
 
-            clone.querySelector(".relatedImage").src = "https://placehold.co/150x200";
-            clone.querySelector(".relatedTitle").textContent = product.name;
-            clone.querySelector(".relatedPrice").textContent = "$" + product.price;
+            const relatedImage = clone.querySelector(".relatedImage");
+            relatedImage.src = "https://placehold.co/150x200";
+            relatedImage.dataset.id = product.id;
 
-            // Populate size select
-            const sizeSelect = clone.querySelector(".relatedSizeSelect");
-            product.sizes.forEach(size => {
-                const option = document.createElement("option");
-                option.value = size;
-                option.textContent = size;
-                sizeSelect.appendChild(option);
-            });
-            
-            // Populate color select
-            const colorSelect = clone.querySelector(".relatedColorSelect");
-            product.color.forEach (color => {
-                const option = document.createElement("option");
-                option.value = color.name;
-                option.textContent = color.name;
-                colorSelect.appendChild(option);
-            });
+            const relatedTitle = clone.querySelector(".relatedTitle");
+            relatedTitle.textContent = product.name;
+            relatedTitle.dataset.id = product.id;
+
+            const relatedPrice = clone.querySelector(".relatedPrice");
+            relatedPrice.textContent = "$" + product.price;
+            relatedPrice.dataset.id = product.id;
+
+            const relatedCard = clone.querySelector(".relatedCard");
+            relatedCard.dataset.id = product.id;
+
+            const selected = displayColorAndSizeSelection(product, clone.querySelector(".relatedColorOptions"), clone.querySelector(".relatedSizeOptions"));
+
+            const button = clone.querySelector(".relatedAddBtn");
             
             // Add button functionality
-            const addBtn = clone.querySelector(".relatedAddBtn");
-            addBtn.addEventListener('click', (e) => {
-                const selectedSize = sizeSelect.value;
-                const selectedColor = colorSelect.value;
-                
-                if (!selectedSize || !selectedColor) {
-                    alert("Please select a size and a color.");
-                    return;
-                }
-                
+            button.onclick = () => {
+                const selectedColor = selected.getColor();
+                const selectedSize = selected.getSize();
                 addToCart(product, selectedSize, selectedColor);
-                sizeSelect.value = "";
-                colorSelect.value = "";
-            });
+            }
+
+            relatedCard.addEventListener('click', (e) => {
+                const allowedNodes = ["IMG", "H3", "P"];
+                const clickedNode = e.target.nodeName;
+
+                if (!allowedNodes.includes(clickedNode)) return;
+
+                const id = e.target.dataset.id || e.currentTarget.dataset.id;
+                if (!id) return;
+
+                showSingleProductById(id, data);
+            })
             
             relatedList.appendChild(clone);
 
         });
     }
 
-    function main(data) {
-        //sort data alphabetically initially
-        data.sort((a, b) => {
-                if (a.name < b.name) return -1;
-                if (a.name > b.name) return 1;
-                return 0;
-            });
-
-        aboutPageHandler();
-        document.querySelector("#filter").addEventListener('click', (e) => { populateFilter(e, data); });
-        document.querySelector("nav").addEventListener('click', (e) => {navigationHandler(e)});
-
-        populateBrowsePage(data);
-
-        document.querySelector("#filter").addEventListener('change', () => {applyFiltersAndSort(data);});
-        document.querySelector("#sort").addEventListener('change', () => {applyFiltersAndSort(data);});
-        document.querySelector("#clear").addEventListener('click', () => {clearFilter(data);});
-
-        document.querySelector("#shippingMethod").addEventListener('change', ()=>{updateCartTotal();});
-        document.querySelector("#shippingLocation").addEventListener('change', ()=>{updateCartTotal();});
-
-        parent.addEventListener('click', (e) => showSingleProduct(e, data));
+    // had to look this up on google 
+    function showSingleProductById(id, data) {
+        const fakeEvent = { target: { id: id, nodeName: "IMG" } };
+        showSingleProduct(fakeEvent, data);
     }
 
-     
-    let cart = [];
+    function displayColorAndSizeSelection(found, colorContainer, sizeContainer) {
+        colorContainer.innerHTML = "";
+        sizeContainer.innerHTML = "";
 
-    function addToCart(product, selectedSize, selectedColor) {
-        if (!selectedSize || !selectedColor) {
-            alert("Please select a size and a color.");
-            return;
+        // set default to first color/size 
+        let selectedColor = found.color[0].name;
+        let selectedSize = found.sizes[0];
+
+        for (let c of found.color) {
+            const colorDiv = document.createElement("div"); 
+
+            if (c.name == selectedColor) {
+                colorDiv.style.border = "4px solid black";
+            } else {
+                colorDiv.style.border = "1px solid black";
+            }
+
+            colorDiv.dataset.value = c.name;
+            colorDiv.style.backgroundColor = c.hex;
+            colorDiv.style.height = "20px";
+            colorDiv.style.width = "20px";
+            colorDiv.style.padding = "5px";
+            colorDiv.style.margin = "2px";
+
+            colorContainer.appendChild(colorDiv);
+
+            colorDiv.addEventListener('click', () => {
+                colorContainer.querySelectorAll("div").forEach(div => {
+                    colorDiv.style.border = "1px solid black";
+                });
+
+                colorDiv.style.border = "4px solid black";
+
+                selectedColor = colorDiv.dataset.value;
+
+            });
         }
 
-        let exists = false;
-        let productId = product.id;
+        for (let s of found.sizes) {
+            const sizeDiv = document.createElement("div");
 
-        for (let i = 0; i < cart.length; i++) {
+            if (s === selectedSize) {
+                sizeDiv.style.backgroundColor = "black";
+                sizeDiv.style.color = "white";
+            }
 
-            if (
-                cart[i].id === productId &&
-                cart[i].selectedSize === selectedSize &&
-                cart[i].selectedColor === selectedColor
-            ) {
-                cart[i].quantity++;
-                exists = true;
-                break;
+            sizeDiv.textContent = s;
+            sizeDiv.dataset.value = s;
+            sizeDiv.style.height = "25px";
+            sizeDiv.style.width = "25px";
+            sizeDiv.style.border = "1px solid black";
+            sizeDiv.style.padding = "5px";
+            sizeDiv.style.textAlign = "center";
+            sizeDiv.style.margin = "2px";
+
+            sizeContainer.appendChild(sizeDiv);
+
+            sizeDiv.addEventListener('click', () => {
+                sizeContainer.querySelectorAll("div").forEach(div => {
+                    div.style.backgroundColor = "white";
+                    div.style.color = "black";
+                });
+
+                sizeDiv.style.backgroundColor = "black";
+                sizeDiv.style.color = "white";
+
+                selectedSize = sizeDiv.dataset.value;
+            });
+
+            if (sizeDiv.style.backgroundColor == "black") {
+                selectedSize = sizeDiv.dataset.value;
             }
         }
 
-        if (!exists) {
-            // Create a copy of the product so original data isn't mutated
-            let newProduct = JSON.parse(JSON.stringify(product));
-            newProduct.quantity = 1;
-            newProduct.selectedSize = selectedSize;
-            newProduct.selectedColor = selectedColor;
-            cart.push(newProduct);
+        return {
+            getColor: () => selectedColor,
+            getSize: () => selectedSize
+        };
+    }
+
+    let cart = [];
+
+    function addToCart(product, selectedSize, selectedColor) {
+        const existingProduct = cart.find(item =>
+            item.id === product.id &&
+            item.selectedSize === selectedSize &&
+            item.selectedColor === selectedColor
+        );
+
+        if (existingProduct) {
+            existingProduct.quantity++;
+        } else {
+            const newProduct = {
+            ...JSON.parse(JSON.stringify(product)),
+            quantity: 1,
+            selectedSize,
+            selectedColor
+        };
+
+        cart.push(newProduct);
         }
 
         updateCart();
@@ -613,81 +603,90 @@ document.addEventListener('DOMContentLoaded', () => {
         const cartBody = document.querySelector("#cartBody");
         const cartTemplate = document.querySelector("#cartItemTemplate");
 
-        if (!cartBody || !cartTemplate) {
-            return;
-        }
-
         cartBody.innerHTML = "";
 
+        let emptyCartMessage = document.querySelector(".emptyCartMessage");
+
         if (cart.length === 0) {
-            const newRow = document.createElement("tr");
-            const td = document.createElement("td");
-            td.colSpan = 6;
-            td.className = "emptyCartMessage";
-            td.textContent = "Your cart is empty";
-            newRow.appendChild(td);
-            cartBody.appendChild(newRow);
+            document.querySelector(".cartTable").classList.add("hidden");
+
+            document.querySelector("#shippingMethod").disabled = true;
+            document.querySelector("#shippingLocation").disabled = true;
+
+            if (!emptyCartMessage) {
+                emptyCartMessage = document.createElement("p");
+                emptyCartMessage.textContent = "Your cart is empty";
+                emptyCartMessage.classList.add("emptyCartMessage");
+                document.querySelector(".cartItems").appendChild(emptyCartMessage);
+            }
+    
             updateCartTotal();
             return;
-        }
+        } else {
+            document.querySelector(".cartTable").classList.remove("hidden");
 
-        for(let i=0; i<cart.length; i++) {
-            let item = cart[i]
+            document.querySelector("#shippingMethod").disabled = false;
+            document.querySelector("#shippingLocation").disabled = false;
 
-            const clone = cartTemplate.content.cloneNode(true);
+            if (emptyCartMessage) {
+                emptyCartMessage.remove();
+            }
 
-            clone.querySelector(".cartItemImage").src = "https://placehold.co/150x200";
-            clone.querySelector(".cartItemTitle").textContent = item.name;
-            clone.querySelector(".cartItemPrice").textContent = "$" + item.price.toFixed(2);
+            for (let item of cart) {
+                const clone = cartTemplate.content.cloneNode(true);
 
-            const colorColumn = clone.querySelector(".cartItemColor");
-            colorColumn.textContent = item.selectedColor;
+                clone.querySelector(".cartItemImage").src = "https://placehold.co/150x200";
+                clone.querySelector(".cartItemTitle").textContent = item.name;
+                clone.querySelector(".cartItemPrice").textContent = "$" + item.price.toFixed(2);
 
-            const sizeColumn = clone.querySelector(".cartItemSize");
-            sizeColumn.textContent = item.selectedSize;
-        
+                const colorColumn = clone.querySelector(".cartItemColor");
+                colorColumn.textContent = item.selectedColor;
 
-            const quantityInput = clone.querySelector(".quantityInput");
-            quantityInput.value = item.quantity;
+                const sizeColumn = clone.querySelector(".cartItemSize");
+                sizeColumn.textContent = item.selectedSize;
+            
 
-            const subtotal = clone.querySelector(".cartItemSubtotal");
-            subtotal.textContent = "$" + (item.price*item.quantity).toFixed(2);
+                const quantityColumn = clone.querySelector(".cartItemQuantity");
+                quantityColumn.textContent = item.quantity;
 
-            quantityInput.addEventListener("input", function(e) {
-                let q = parseInt(e.target.value);
-                if (isNaN(q) || q < 1) {
-                    q = 1;
-                }
-                
-                e.target.value = q;
-                item.quantity = q;
+                const subtotal = clone.querySelector(".cartItemSubtotal");
                 subtotal.textContent = "$" + (item.price*item.quantity).toFixed(2);
-                
-                updateCartTotal();
-                updateCartCount();
-            });
 
-            const removeBtn = clone.querySelector(".removeBtn");
-            removeBtn.dataset.id = item.id;
-            removeBtn.dataset.size = item.selectedSize;
+                const removeBtn = clone.querySelector(".removeBtn");
+                removeBtn.dataset.id = item.id;
+                removeBtn.dataset.size = item.selectedSize;
+                removeBtn.dataset.color = item.selectedColor;
 
-            removeBtn.addEventListener("click", function(e) {
-                const productId = e.target.dataset.id;
-                const productSize = e.target.dataset.size;
+                removeBtn.addEventListener("click", (e) => {
+                    removeProduct(e);
+                });
 
-                const index = cart.findIndex(p => p.id === productId && p.selectedSize === productSize);
-                if (index !== -1) {
-                    cart.splice(index, 1);
-                    updateCart();
-                    updateCartCount();
-                    updateCartTotal();
-                }
-            });
-
-            cartBody.appendChild(clone);
+                cartBody.appendChild(clone);
+            }
         }
+
 
         updateCartTotal();
+    }
+
+    // removes product from cart
+    function removeProduct(e) {
+        const productId = e.target.dataset.id;
+        const productSize = e.target.dataset.size;
+        const productColor = e.target.dataset.color;
+
+        const index = cart.findIndex(p => 
+            p.id == productId &&
+            p.selectedSize == productSize &&
+            p.selectedColor == productColor
+        );
+
+            if (index !== -1) {
+                cart.splice(index, 1);
+                updateCart();
+                updateCartCount();
+                updateCartTotal();
+            }
     }
 
     //calculates the cost for items in the cart
@@ -702,8 +701,6 @@ document.addEventListener('DOMContentLoaded', () => {
         shippingCost(total);
     }
 
-    
-    //calculates order cost including shipping and taxes based on shipping method and location
     function shippingCost(total) {
         const shippingMethod = document.querySelector("#shippingMethod").value;
         const shippingLocation = document.querySelector("#shippingLocation").value;
@@ -739,6 +736,54 @@ document.addEventListener('DOMContentLoaded', () => {
         orderTotal.textContent = "$" + orderCost.toFixed(2);
 
     }
+
+    function showToastAndClear() {
+        if (cart.length != 0) {
+            const container = document.querySelector(".toastContainer");
+            const toast = document.createElement("div");
+            toast.classList.add('toast');
+            toast.textContent = "Your order has been submitted!";
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove("hidden");
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add("hidden");
+                setTimeout(() => {
+                    container.removeChild(toast);
+                }, 500);
+            }, 3000);
+
+            cart.length = 0;
+            updateCart();
+            updateCartCount();
+        }
+        
+    }
+
+    function main(data) {
+        //sort data alphabetically initially
+        data.sort((a, b) => {
+                if (a.name < b.name) return -1;
+                if (a.name > b.name) return 1;
+                return 0;
+            });
+
+        aboutPageHandler();
+        document.querySelector("#filter").addEventListener('click', (e) => { populateFilter(e, data); });
+        document.querySelector("nav").addEventListener('click', (e) => {navigationHandler(e)});
+        populateBrowsePage(data);
+        document.querySelector("#filter").addEventListener('change', () => {applyFiltersAndSort(data);});
+        document.querySelector("#sort").addEventListener('change', () => {applyFiltersAndSort(data);});
+        document.querySelector("#clear").addEventListener('click', () => {clearFilter(data);});
+
+        document.querySelector("#shippingMethod").addEventListener('change', () => {updateCartTotal();});
+        document.querySelector("#shippingLocation").addEventListener('change', () => {updateCartTotal();});
+        document.querySelector("#checkoutButton").addEventListener('click', () => {showToastAndClear()});
+    }   
 
 
 });

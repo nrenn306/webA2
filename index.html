@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assignment 2</title>    
     <link rel="stylesheet" type="text/css" href="css/ass2.css" />
     
@@ -60,13 +60,8 @@
             <h2>Featured Products</h2>
             <div class="product-grid">
                 <div class="product-card">
-                    <img src="images/top.jpg" alt="Top">
-                    <p>Basic T-Shirt</p>
-                    <span>$19</span>
-                </div>
-                <div class="product-card">
                     <img src="images/jacket.jpg" alt="Jacket">
-                    <p>Jean Jacket</p>
+                    <p>Winter Jacket</p>
                     <span>$129</span>
                 </div>
                 <div class="product-card">
@@ -75,11 +70,10 @@
                     <span>$79</span>
                 </div>
                 <div class="product-card">
-                    <img src="images/shirt.jpg" alt="Button up">
-                    <p>Button Up Tee</p>
-                    <span>$39</span>
+                    <img src="images/shirt.jpg" alt="Shirt">
+                    <p>Essential Tee</p>
+                    <span>$29</span>
                 </div>
-                
             </div>
         </section>
     </article>
@@ -90,14 +84,10 @@
             <div id="gender">
                 <p>Gender ▲</p>
                 <div class="hidden" id="genderCheckBox">
-                    <div class="filter-item">
-                        <input type="checkbox" class="gender" id="womens" name="womens" value="womens">
-                        <label for="womens">Womens</label>
-                    </div>
-                    <div class="filter-item">
-                        <input type="checkbox" class="gender" id="mens" name="mens" value="mens">
-                        <label for="mens">Mens</label>
-                    </div>
+                    <input type="checkbox" class="gender" id="womens" name="womens" value="womens">
+                    <label for="womens">Womens</label>
+                    <input type="checkbox" class="gender" id="mens" name="mens" value="mens">
+                    <label for="mens">Mens</label>
                 </div>
             </div>
             <div id="category">
@@ -134,18 +124,14 @@
             </div>
             <template>
                 <!---this is where we will create all the result product items based on the filters-->
-                <div class="productCard">
-                    <img class="productImage" src="https://placehold.co/150x200">
-                    <p class="browseResultProductTitle"></p>
-                    <p class="browseResultProductPrice"></p>
-                    <select class="sizeSelect">
-                        <option value="">Select Size</option>
-                    </select>
-                    <select class="colorSelect">
-                        <option value="">Select Color</option>
-                    </select>
-                    <button class="addBtn">Add</button>
-                </div>
+                <img class="productImage" src="https://placehold.co/150x200">
+                <p class="browseResultProductTitle"></p>
+                <p class="browseResultProductPrice"></p>
+
+                <div class="browseColorOptions"></div>
+                <div class="browseSizeOptions"></div>
+
+                <button class="addBtn">Add</button>
             </template>
             <div id="browseResults"></div>
         </section>
@@ -153,9 +139,9 @@
 
     <article class="hidden" id="singleProduct">
         <div id="breadcrumb">
-            <a id="home">Home ></a>
-            <a id="genderBC"></a>
-            <a id="categoryBC"></a>
+            <a href="#">Home></a>
+            <a href="#" id="genderBC"></a>
+            <a href="#" id="categoryBC"></a>
             <span id="productName"></span>
         </div>
 
@@ -174,17 +160,9 @@
                     <input type="number" id="qtyInput" min="1" value="1">
                 </div>
 
-                <div id="colourOptions">
-                    <select id="colorSelect">
-                        <option value="">Select Color</option>
-                    </select>
-                </div>
+                <div id="colorOptions"></div>
 
-                <div id="sizeOptions">
-                    <select id="sizeSelect">
-                        <option value="">Select Size</option>
-                    </select>
-                </div>
+                <div id="sizeOptions"></div>
 
                 <button id="singleAddBtn">+ Add to Cart</button>
         </section>
@@ -197,12 +175,8 @@
                     <img class="relatedImage" src="https://placehold.co/150x200">
                     <h3 class="relatedTitle"></h3>
                     <p class="relatedPrice"></p>
-                    <select class="relatedSizeSelect">
-                        <option value="">Select Size</option>
-                    </select>
-                    <select class="relatedColorSelect">
-                        <option value="">Select Color</option>
-                    </select>
+                    <div class="relatedColorOptions"></div>
+                    <div class="relatedSizeOptions"></div>
                     <button class="relatedAddBtn">Add</button>
                 </li>
             </template>
@@ -226,32 +200,24 @@
                         <th>Subtotal</th>
                     </tr>
                 </thead>
-                <tbody id="cartBody">
-                </tbody>
-                <template id="cartItemTemplate">
-                    <tr class="cartRow">
-                        
-                        <td class="cartItem">
-                            <button class="removeBtn">Remove</button>
-                            <img class="cartItemImage" src="https://placehold.co/150x200">
-                            <span class="cartItemTitle"></span>
-                        </td>
-
-                        <td class="cartItemColor"></td>
-
-                        <td class="cartItemSize"></td>
-
-                        <td class="cartItemPrice"></td>
-
-                        <td class="cartItemQuantity">
-                            <input type="number" class="quantityInput" min="1" value="1">
-                        </td>
-                        
-                        <td class="cartItemSubtotal"></td>
-
-                    </tr>
-                </template>
+                <tbody id="cartBody"></tbody>
             </table>
+
+            <template id="cartItemTemplate">
+                <tr class="cartRow">      
+                    <td class="cartItem">
+                        <button class="removeBtn">Remove</button>
+                        <img class="cartItemImage" src="https://placehold.co/150x200">
+                        <span class="cartItemTitle"></span>
+                    </td>
+
+                    <td class="cartItemColor"></td>
+                    <td class="cartItemSize"></td>
+                    <td class="cartItemPrice"></td>
+                    <td class="cartItemQuantity"></td>                       
+                    <td class="cartItemSubtotal"></td>
+                </tr>
+            </template>
         </section>
 
         <section class="shippingSummary">
@@ -281,6 +247,7 @@
             </div>
             <button id="checkoutButton">Checkout</button>
         </section>
+        <div class="toastContainer"></div>
     </article>
 
     <dialog id="about">
