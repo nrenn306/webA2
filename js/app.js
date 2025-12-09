@@ -596,6 +596,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateCart();
         updateCartCount();
+        showAddToCartToast();
+        
     }
 
 
@@ -747,6 +749,27 @@ document.addEventListener('DOMContentLoaded', () => {
         orderTotal.textContent = "$" + orderCost.toFixed(2);
 
     }
+
+    function showAddToCartToast() {
+        const container = document.querySelector(".toastContainer");
+        const toast = document.createElement("div");
+        toast.classList.add("toast", "hidden"); 
+        toast.textContent = "Item added to cart!";
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.remove("hidden");
+        }, 10);
+
+        setTimeout(() => {
+            toast.classList.add("hidden");
+            setTimeout(() => {
+                container.removeChild(toast);
+            }, 500);
+        }, 2000);
+    }
+
 
     function showToastAndClear() {
         if (cart.length != 0) {
