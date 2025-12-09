@@ -644,7 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         //populate colour options
         for (let c of found.color) {
-            const colourDiv = document.createElement("div"); 
+            const colorDiv = document.createElement("div"); 
 
             //outline selected colour
             if (c.name == selectedColor) {
