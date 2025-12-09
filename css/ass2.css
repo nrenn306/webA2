@@ -132,6 +132,25 @@ footer p {
     font-size: 13px;
 }
 
+footer a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+    padding: 8px 16px;
+    border: 2px solid var(--accent-color);
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+footer a:hover {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 169, 97, 0.3);
+}
+
 /* ==================== HERO SECTION ==================== */
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("../storeFront.jpg");
@@ -569,6 +588,33 @@ footer p {
     font-size: 0.9rem;
 }
 
+#sizeOptions {
+    margin: 20px 0;
+    display: flex;
+    gap: 12px;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+#sizeOptions > div {
+    padding: 7px 11px;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--white);
+    color: var(--text-dark);
+    text-align: center;
+    flex-shrink: 0;
+}
+
+#sizeOptions > div:hover {
+    border-color: var(--accent-color);
+    background-color: rgba(201, 169, 97, 0.08);
+}
+
 #singleAddBtn {
     width: 100%;
     padding: 12px;
@@ -583,12 +629,19 @@ footer p {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 #singleAddBtn:hover {
     background: var(--accent-color);
     border-color: var(--accent-color);
     color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#singleAddBtn:active {
+    transform: translateY(0);
 }
 
 #relatedProducts {
@@ -915,6 +968,25 @@ dialog ul {
 dialog ul li {
     margin-bottom: 6px;
     font-size: 0.9rem;
+}
+
+dialog a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid var(--accent-color);
+    border-radius: 6px;
+    margin: 15px 0;
+}
+
+dialog a:hover {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 169, 97, 0.3);
 }
 
 #x,

@@ -541,12 +541,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             sizeDiv.textContent = s;
             sizeDiv.dataset.value = s;
-            sizeDiv.style.height = "25px";
-            sizeDiv.style.width = "25px";
-            sizeDiv.style.border = "1px solid black";
-            sizeDiv.style.padding = "5px";
+            sizeDiv.style.padding = "7px 11px";
             sizeDiv.style.textAlign = "center";
-            sizeDiv.style.margin = "2px";
+            sizeDiv.style.margin = "0";
+            sizeDiv.style.border = "2px solid #e0e0e0";
+            sizeDiv.style.borderRadius = "5px";
 
             sizeContainer.appendChild(sizeDiv);
 
