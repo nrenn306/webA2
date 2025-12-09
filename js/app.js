@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return JSON.parse(localStorage.getItem('products')) || [];
     }
 
+    /* */
     function updateStorage(data) {
         localStorage.setItem('products', JSON.stringify(data));
     }
@@ -332,12 +333,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /**
+     * This function populates the browse page with product data
+     * @param data The product data
+     */
     function populateBrowsePage(data) {
         const template = document.querySelector("#results template");
         const parent = document.querySelector("#browseResults");
 
+        //clear existing products
         parent.innerHTML = "";
 
+        //populate products using template and data
         for (let d of data) {
             const clone = template.content.cloneNode(true);
 
@@ -359,6 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             parent.appendChild(clone);
 
+            //what to do when add to cart button is clicked
             button.onclick = () => {
                 const selectedColor = selected.getColor();
                 const selectedSize = selected.getSize();
@@ -369,8 +377,14 @@ document.addEventListener('DOMContentLoaded', () => {
         parent.addEventListener('click', (e) => showSingleProduct(e, data));
     }
 
+    /**
+     * This function clears all selected filters and updates the browse page accordingly
+     * @param data The product data
+     */
     function clearFilter(data) {
         const checked = [...document.querySelectorAll('#filter input:checked')];
+
+        //uncheck all checked filters and clear the checked array
         for (let c of checked) {
             c.checked = false;
         }
@@ -381,39 +395,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
+    /**
+     * This function shows the single product view for a clicked product
+     * @param e The event object from clicking on a product
+     * @param data The product data
+     */
     function showSingleProduct(e, data) {
+        //check if clicked element is an image or title
         if (e.target.nodeName == "IMG" || e.target.classList.contains("browseResultProductTitle")) {
+            //if so show single product view and hide browse view
             document.querySelector("#browse").classList.add("hidden");
             document.querySelector("#singleProduct").classList.remove("hidden");
 
             const id = e.target.id;
-
+            
+            //find product based on clicked ID
             const found = data.find(p => p.id == id);
 
+            //create breadcrumb navigation
             document.querySelector("#genderBC").textContent = found.gender;
             document.querySelector("#categoryBC").textContent = " > " + found.category;
             document.querySelector("#productName").textContent = " > " + found.name;
 
+            //create single product display
             document.querySelector("#productImage").alt = found.name;
-
             document.querySelector("#productTitle").textContent = found.name;
             document.querySelector("#productPrice").textContent = "$" + found.price;
             document.querySelector("#productDescriptionText").textContent = found.description;
             document.querySelector("#productMaterial").textContent = found.material;
 
-
+            //based on found product, display colour and size options
             const selected = displayColorAndSizeSelection(found, document.querySelector("#colorOptions"), document.querySelector("#sizeOptions"));
 
+            //add to cart button functionality for single product
             document.querySelector("#singleAddBtn").onclick = () => {
                 const selectedColor = selected.getColor();
                 const selectedSize = selected.getSize();
                 const selectedQuantity = parseInt(document.querySelector("#qtyInput").value);
 
+                //validate quantity input
                 if (selectedQuantity <= 0) {
                     alert("Please enter a valid quantity.");
                     return;
                 }
 
+                //add selected quantity of product to cart
                 for (let i = 0; i < selectedQuantity; i++) {
                     addToCart(found, selectedSize, selectedColor);
                 }
@@ -424,6 +450,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /**
+     * This function loads related products based on category and gender
+     * @param productData The product object for which related products are to be found
+     * @param data The product data
+     */
     function loadRelatedProducts(productData, data) {
         //show related products based on category
         let related = data.filter(p => p.category === productData.category && p.id !== productData.id);
@@ -434,6 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
             related.push(...sameGender);
         }
 
+        //limit related products to 4
         related = related.slice(0,4);
 
         const relatedList = document.querySelector("#relatedList");
@@ -441,6 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const template = document.querySelector("#relatedProductTemplate");
 
+        //populate related products using template and related array
         related.forEach(product=> {
             const clone = template.content.cloneNode(true);
 
@@ -463,13 +496,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const button = clone.querySelector(".relatedAddBtn");
             
-            // Add button functionality
+            //add button functionality
             button.onclick = () => {
                 const selectedColor = selected.getColor();
                 const selectedSize = selected.getSize();
                 addToCart(product, selectedSize, selectedColor);
             }
 
+            //allows clicking on image, title, or price to show single product
             relatedCard.addEventListener('click', (e) => {
                 const allowedNodes = ["IMG", "H3", "P"];
                 const clickedNode = e.target.nodeName;
@@ -487,23 +521,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // had to look this up on google 
+  
+    /**
+     * This functions shows a single product based on its ID
+     * @param id The ID of the product to be displayed
+     * @param data The product data 
+     */
     function showSingleProductById(id, data) {
+        // had to look this up on google 
         const fakeEvent = { target: { id: id, nodeName: "IMG" } };
         showSingleProduct(fakeEvent, data);
     }
 
+    /**
+     * This function displays colour and size selection options for a given product
+     * @param found The product object for which to display colour and size options
+     * @param colorContainer The HTML container element for colour options
+     * @param sizeContainer The HTML container element for size options
+     * @returns The selected colour and size through getter functions
+     */
     function displayColorAndSizeSelection(found, colorContainer, sizeContainer) {
         colorContainer.innerHTML = "";
         sizeContainer.innerHTML = "";
 
-        // set default to first color/size 
+        //set default to first colour/size 
         let selectedColor = found.color[0].name;
         let selectedSize = found.sizes[0];
 
+        //populate colour options
         for (let c of found.color) {
-            const colorDiv = document.createElement("div"); 
+            const colourDiv = document.createElement("div"); 
 
+            //outline selected colour
             if (c.name == selectedColor) {
                 colorDiv.style.border = "4px solid black";
             } else {
@@ -520,6 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
             colorContainer.appendChild(colorDiv);
 
             colorDiv.addEventListener('click', () => {
+                //remove border from all other colours
                 colorContainer.querySelectorAll("div").forEach(div => {
                     colorDiv.style.border = "1px solid black";
                 });
@@ -531,9 +581,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        //populate size options
         for (let s of found.sizes) {
             const sizeDiv = document.createElement("div");
 
+            //highlight selected size
             if (s === selectedSize) {
                 sizeDiv.style.backgroundColor = "black";
                 sizeDiv.style.color = "white";
@@ -549,6 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             sizeContainer.appendChild(sizeDiv);
 
+            //add click event to select size
             sizeDiv.addEventListener('click', () => {
                 sizeContainer.querySelectorAll("div").forEach(div => {
                     div.style.backgroundColor = "white";
@@ -561,19 +614,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectedSize = sizeDiv.dataset.value;
             });
 
+            //default selected size
             if (sizeDiv.style.backgroundColor == "black") {
                 selectedSize = sizeDiv.dataset.value;
             }
         }
 
+        // return selected colour and size
         return {
             getColor: () => selectedColor,
             getSize: () => selectedSize
         };
     }
 
+    // shopping cart array that holds products added to cart
     let cart = [];
 
+    /**
+     * This function adds a product to the cart and calls functions to update the cart display and cart count
+     * @param product The product object to be added to the cart
+     * @param selectedSize The selected size of the product
+     * @param selectedColor The selected color of the product
+     */
     function addToCart(product, selectedSize, selectedColor) {
         const existingProduct = cart.find(item =>
             item.id === product.id &&
@@ -600,8 +662,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
     }
 
-
-    //updates the number of items in the cart
+    /**
+     * This function updates the cart count displayed in the navigation bar
+     * @returns Updated cart count
+     */
     function updateCartCount() {
         let total = 0;
         for (let i=0; i < cart.length; i++) {
@@ -611,21 +675,28 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector("#cartCount").textContent = total;
     }
 
-    //updates the table for cart items
+    /**
+     * This function updates the cart display based on the current contents of the cart
+     * @returns Updated cart display
+     */
     function updateCart() {
         const cartBody = document.querySelector("#cartBody");
         const cartTemplate = document.querySelector("#cartItemTemplate");
 
+        //Clear existing cart display
         cartBody.innerHTML = "";
 
         let emptyCartMessage = document.querySelector(".emptyCartMessage");
 
+        //If cart is empty, show empty cart message and hide cart table
         if (cart.length === 0) {
             document.querySelector(".cartTable").classList.add("hidden");
 
+            //Disable shipping options if cart is empty
             document.querySelector("#shippingMethod").disabled = true;
             document.querySelector("#shippingLocation").disabled = true;
 
+            //Show empty cart message if not already present
             if (!emptyCartMessage) {
                 emptyCartMessage = document.createElement("p");
                 emptyCartMessage.textContent = "Your cart is empty";
@@ -638,13 +709,16 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             document.querySelector(".cartTable").classList.remove("hidden");
 
+            //Enable shipping options when cart has items
             document.querySelector("#shippingMethod").disabled = false;
             document.querySelector("#shippingLocation").disabled = false;
 
+            //Remove empty cart message if present
             if (emptyCartMessage) {
                 emptyCartMessage.remove();
             }
 
+            //Populate cart with current items based on cart array and template
             for (let item of cart) {
                 const clone = cartTemplate.content.cloneNode(true);
 
@@ -682,7 +756,11 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCartTotal();
     }
 
-    // removes product from cart
+    /**
+     * This function removes a product from the cart 
+     * It ensures that the correct product is removed by matching the product ID, selected size, and selected color
+     * @param e Event object from clicking the remove button
+     */
     function removeProduct(e) {
         const productId = e.target.dataset.id;
         const productSize = e.target.dataset.size;
@@ -702,7 +780,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
     }
 
-    //calculates the cost for items in the cart
+    /**
+     * This function updates the merchandise total in the cart and calls shippingCost to update shipping, tax, and order total
+     */
     function updateCartTotal() {
         let total = 0;
         for (let i = 0; i < cart.length; i++) {
@@ -714,6 +794,10 @@ document.addEventListener('DOMContentLoaded', () => {
         shippingCost(total);
     }
 
+    /**
+     * This function calculates shipping cost, tax, and order total based on the merchandise total
+     * @param total This is the merchandise total before shipping and taxes
+     */
     function shippingCost(total) {
         const shippingMethod = document.querySelector("#shippingMethod").value;
         const shippingLocation = document.querySelector("#shippingLocation").value;
@@ -725,9 +809,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let taxCost =  0;
         let orderCost = 0;
 
+        //if order is over $500, free shipping
         if (total > 500) {
             shippingCost = 0
         } else if (total > 0) {
+            //determine shipping cost based on method and location
             const rates = {
                 standard:  { canada: 10, unitedStates: 15, international: 20 },
                 express:   { canada: 25, unitedStates: 25, international: 30 },
@@ -738,6 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         }
 
+        //tax for canada only
         if (shippingLocation === "canada") {
             taxCost = total * 0.05;
         }
@@ -750,6 +837,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
+    /**
+     * This function shows a toast notification based on the passed text
+     * @param text Message to be shown in the toast.
+     */
     function showToast(text) {
         if (cart.length != 0) {
             const container = document.querySelector(".toastContainer");
@@ -773,30 +864,57 @@ document.addEventListener('DOMContentLoaded', () => {
         
     }
 
+    /**
+     * This function clears all items from the shopping cart
+    */
     function clearCart() {
         cart.length = 0;
         updateCart();
         updateCartCount();
     }
 
+    /**
+     * This function initializes the entire website once product data has been loaded
+     * It sorts products, sets up event listeners, and prepares the page for iteractions.
+     * @param data The product data loaded.
+     */
     function main(data) {
-        //sort data alphabetically initially
+
+        //Sort the product data alphabetically by name when when the page loads
         data.sort((a, b) => {
                 if (a.name < b.name) return -1;
                 if (a.name > b.name) return 1;
                 return 0;
             });
 
+        //About page popup
         aboutPageHandler();
+
+        //Handle clicking on a filter 
         document.querySelector("#filter").addEventListener('click', (e) => { populateFilter(e, data); });
+
+        //Handle navigation clicks
         document.querySelector("nav").addEventListener('click', (e) => {navigationHandler(e)});
+
+        //Load browse page with products
         populateBrowsePage(data);
+
+        //Handle filtering based on checked filters
         document.querySelector("#filter").addEventListener('change', () => {applyFiltersAndSort(data);});
+
+        //Handle sorting when sort option is changed
         document.querySelector("#sort").addEventListener('change', () => {applyFiltersAndSort(data);});
+
+        //Handle clearing filters when clear button is clicked
         document.querySelector("#clear").addEventListener('click', () => {clearFilter(data);});
 
+        //Handle changes made to shipping method
         document.querySelector("#shippingMethod").addEventListener('change', () => {updateCartTotal();});
+
+        //Handle changes made to shipping location
         document.querySelector("#shippingLocation").addEventListener('change', () => {updateCartTotal();});
+
+        //Handle checkout button click
         document.querySelector("#checkoutButton").addEventListener('click', () => {showToast("Your order has been submitted!");
             clearCart();
         });
