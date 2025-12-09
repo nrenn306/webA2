@@ -2,41 +2,62 @@ document.addEventListener('DOMContentLoaded', () => {
     const url = "https://gist.githubusercontent.com/rconnolly/d37a491b50203d66d043c26f33dbd798/raw/37b5b68c527ddbe824eaed12073d266d5455432a/clothing-compact.json";
 
     /* ---------------- utility functions ---------------- */
+    /**
+     * Retrieves the product data stored in localStorage
+     * 
+     * @returns {Array} An array of product objects, or an empty array if no data is stored. 
+     */
     function retrieveStorage() {
         return JSON.parse(localStorage.getItem('products')) || [];
     }
 
-    /* */
+    /**
+     * Saves the provided product data into localStorage
+     * 
+     * @param {Array|Object} data - The product data to store. This will be converted to a JSON string before saving.
+     */
     function updateStorage(data) {
         localStorage.setItem('products', JSON.stringify(data));
     }
 
-    // fetch and save data to local storage and run main()
+    /**
+     * Fetches product data from the server, saves it to localStorage, 
+     * and then initializes the application with the retrieved data.
+     */
     function fetchAndStore() {
         fetch(url)
         .then(response => {
+            // check if the fetch request was successful
             if (response.ok) {
-                return response.json();
+                return response.json(); // convert the response to JSON
             } else {
+                // if response is not ok, throw an error so it jumps to .catch()
                 throw new error("fetch failed");
             }
         })
         .then(data => {
-            updateStorage(data);
-            main(data);
+            updateStorage(data); // save the data into localStorage
+            main(data); // start the main logic of the app using the fresh data
         })
-        .catch(error => console.error(error));
+        .catch(error => console.error(error)); // log errors that occur during fetch 
     }
 
-    // check if data already exists in local storage or not 
+
+    // initializes the application by checking whether product data already exists in localStorage
     const products = retrieveStorage();
     if (products && products.length > 0) {
+        // if data exists, load the app using stored products
         main(products);
     } else {
+        // if no data found, fetch from server and store it 
         fetchAndStore();
     }
     
-    // toggles triangle for browse filter 
+    /**
+     * Toggles the direction of the triangle icon (▲/▼) inside the browse filter handling.
+     * 
+     * @param {string} name - The ID of the filter section whose triangle should toggle.
+     */
     function toggleTriagngle(name) {
         const p = document.querySelector("#" + name + " p");
         p.textContent = p.textContent.endsWith('▲')
@@ -44,15 +65,20 @@ document.addEventListener('DOMContentLoaded', () => {
             : p.textContent.replace('▼', '▲');
     }
 
-    // populates category filter 
+    /**
+     * Populates and displays the category filter list
+     * 
+     * @param {Array<Object>} data - The full list of product objects. Each object should contain a 'category' property.
+     */
     function populateCategoryFilter(data) {
+        // get the category filter container and toggle visibility
         const categoryCheckBox = document.querySelector("#categoryCheckBox");
         categoryCheckBox.classList.toggle("hidden");
 
-        categoryCheckBox.innerHTML = "";
+        categoryCheckBox.innerHTML = ""; // clear previous options
+        toggleTriagngle("category"); // toggle arrow next to filter header 
 
-        toggleTriagngle("category");
-
+        // collect all unique product categories 
         const categories = [];
         for (let product of data) {
             if (!categories.includes(product.category)) {
@@ -60,8 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     
-        categories.sort();
+        categories.sort(); // sort categories alphabetically 
         
+        // build the checkbox elements for each category
         for (let c of categories) {
             const container = document.createElement("div");
             container.classList.add("filter-item");
@@ -84,15 +111,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // populates size filter
+    /**
+     * Populates and displays the size filter options 
+     * 
+     * @param {Array<Object>} data - The product list, where each product contains a 'sizes' array of available size options.
+     */
     function populateSizeFilter(data) {
+        // get the size filter container and toggle visibility
         const sizeCheckBox = document.querySelector("#sizeCheckBox");
         sizeCheckBox.classList.toggle("hidden");
 
-        sizeCheckBox.innerHTML = "";
+        sizeCheckBox.innerHTML = ""; // clear any previous size options 
+        toggleTriagngle("size"); // toggle the arrow icon in the filter header
 
-        toggleTriagngle("size");
-
+        // collect all unique sizes from the product list
         const sizes = [];
         for (let product of data) {
             for (let s of product.sizes) {
@@ -102,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // build the checkbox elements for each size
         for (let s of sizes) {
             const container = document.createElement("div");
             container.classList.add("filter-item");
@@ -124,15 +157,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // populates color filter 
+    /**
+     * Populates and displays the color filter options.
+     * 
+     * @param {Array<Object>} data - The list of products, each containing a 'color' array where each color has a 'name' and 'hex' value. 
+     */
     function populateColorsFilter(data) {
+        // get the color filter container and toggle visibility
         const colorsCheckBox = document.querySelector("#colorsCheckBox");
         colorsCheckBox.classList.toggle("hidden");
 
-        colorsCheckBox.innerHTML = "";
+        colorsCheckBox.innerHTML = ""; // clear any previous color options 
+        toggleTriagngle("colors"); // toggle the arrow icon in the filter header
 
-        toggleTriagngle("colors");
-
+        // collect all unique color obj4ects from the dataset 
         const colors = [];
         for (let product of data) {
             for (let c of product.color) {
@@ -143,12 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         }
 
+        // sort colors alphabetically by name 
         colors.sort((a, b) => {
             if (a.name < b.name) return -1;
             if (a.name > b.name) return 1;
             return 0;
         });
 
+        // build the checkbox elements for each color 
         for (let c of colors) {
             const container = document.createElement("div");
             container.classList.add("filter-item");
@@ -165,6 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
             label.textContent = c.name;
             label.setAttribute("for", c.name);
 
+            // visual color swatch 
             const div = document.createElement("div");
             div.style.backgroundColor = c.hex;
             div.style.height = "20px";
@@ -179,9 +220,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // populates all filters according to what was clicked 
+    /**
+     * Determine which filter section to populate or toggle based on
+     * the text content of the clicked <p> element. 
+     * 
+     * @param {Event} e - The click event triggered on the filter container. 
+     * @param {Array<Object>} data -The full product dataset used to generate filter options such as categories, sizes, and colors.
+     */
     function populateFilter(e, data) {
+        // make sure only clicks on <p> elements (filter headersa) are processed
         if (e.target.nodeName == "P") {
+            // check which filter header was clicked based on its text 
                 if (e.target.textContent.includes("Gender")) {
                     document.querySelector("#genderCheckBox").classList.toggle("hidden");
                     toggleTriagngle("gender")
@@ -195,55 +244,79 @@ document.addEventListener('DOMContentLoaded', () => {
             }
     }
 
-    // navigation
+    /**
+     * Handles all site-wide navigation interactions based on the user's click.
+     * 
+     * @param {Event} e - The click event triggered anywhere within the navigation component. 
+     * @returns After click has been handled. 
+     */
     function navigationHandler(e) {
         const home = document.querySelector("#home");
         const browse = document.querySelector("#browse");
         const about = document.querySelector("#about");
         const shoppingCart = document.querySelector("#shoppingCart");
         
+        // always hide thr single product page when navigating 
         document.querySelector("#singleProduct").classList.add("hidden");
 
-        if(e.target.nodeName == "IMG") {
+        if(e.target.nodeName == "IMG") { // when clicking the site logo, go to home
             showView("home")
             return;
-        } else if (e.target.nodeName == "LI") {
+        } else if (e.target.nodeName == "LI") { // when clicking a navigation list item (<li>)
             const navList = document.querySelectorAll("#navigation li");
-            const clickedNav = e.target.textContent.trim();
+            const clickedNav = e.target.textContent.trim(); // get the text of the clicked nav item (cleaned)
 
             if (clickedNav === "Home") {showView("home"); return;}
             if (clickedNav === "Browse") {showView("browse"); return;}
             if (clickedNav === "About") {document.querySelector("#about").showModal(); return;}
-        } else if (e.target.nodeName == "H3" || e.target.nodeName == "DIV") {
+        } else if (e.target.nodeName == "H3" || e.target.nodeName == "DIV") { // clicking cart header opens the cart
             showView("shoppingCart");
             updateCart();
         }
     }
 
+    /**
+     * Shows the specified main view of the website and hides the others. 
+     * 
+     * @param {String} viewName - The name of the view to show. "home", "browse",  or "shoppingCart".
+     */
     function showView(viewName) {
+        // hide all main sections
         home.classList.add("hidden");
         browse.classList.add("hidden");
         shoppingCart.classList.add("hidden");
 
+        // show the requested view based on viewName
         if (viewName === "home") home.classList.remove("hidden");
         if (viewName === "browse") browse.classList.remove("hidden");
         if (viewName === "shoppingCart") shoppingCart.classList.remove("hidden");
     }
 
-    // handling about pop up
+    /**
+     * Sets up event listeners to handle closing the "about" pop up modal.
+     */
     function aboutPageHandler() {
+        // close the "about" modal when the "close" button is clicked
         document.querySelector("#close").addEventListener('click', () => {
             document.querySelector("#about").close();
         });
+        // close the "about" modal when the "x" button is clicked
         document.querySelector("#x").addEventListener('click', () => {
             document.querySelector("#about").close();
         });
     }
 
-    // handle filter depending on what filter is checked 
+    /**
+     * Filters the product data based on which filter checkboxes are checked. 
+     * 
+     * @param {Array} data - The array of product objects to filter
+     * @returns {Array} The filtered array of products based on active filters. 
+     */
     function filterHandler(data) {
+        // get all checked inputs inside the #filter container 
         const checked = [...document.querySelectorAll('#filter input:checked')];
 
+        // organize the checke filters into categories 
         const filters = {
             gender: checked.filter(p => p.classList.contains("gender")).map(p => p.id),
             category: checked.filter(p => p.classList.contains("category")).map(p => p.id),
@@ -251,8 +324,10 @@ document.addEventListener('DOMContentLoaded', () => {
             color: checked.filter(p => p.classList.contains("color")).map(p => p.id)
         };
 
+        // start with the full product list
         let results = data;
 
+        // apply filter based on checkboxes
         if (filters.gender.length > 0) {
             results = results.filter(p => filters.gender.includes(p.gender));
         }
@@ -266,16 +341,22 @@ document.addEventListener('DOMContentLoaded', () => {
             results = results.filter(p => p.color.some(c => filters.color.includes(c.name)));
         }
 
-        showSelectedFilters(checked, data);
+        showSelectedFilters(checked, data); // updxate UI
 
-        return results;
+        return results; // return filtered product list
     
     }
 
+    /**
+     * Applies active filters and sorts the product data before displaying it. 
+     * 
+     * @param {Array} data - Array of all product objects. 
+     */
     function applyFiltersAndSort(data) {
-        const results = filterHandler(data);
-        const sortType = document.querySelector("#sort").value;
+        const results = filterHandler(data); // apply filters and get the filtered results 
+        const sortType = document.querySelector("#sort").value; // get the selected sorting option from the dropdown
 
+        // perform sort based on selected option 
         if (sortType == "nameAZ") {
             results.sort((a, b) => {
                 if (a.name < b.name) return -1;
@@ -300,15 +381,27 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // update browse page 
         populateBrowsePage(results);
         
     }
 
+    /**
+     * Displays the currently selected filters as buttons and allows removing them. 
+     * 
+     * @param {Array} checked - Array of all currently checked input elements (filters).
+     * @param {Array} data - Array of all product objects to reapply filtering. 
+     */
     function showSelectedFilters(checked, data) {
+        // get the container for displaying selected filters and clear it 
         const div = document.querySelector("#selectedFilters");
         div.innerHTML = "";
+
+        // loop through each checked filter input
         for(let c of checked) {
-            const button = document.createElement("button");
+            const button = document.createElement("button"); // create a button to represent the selected filter 
+
+            // for gender filters, display the label text instead of the id
             if (c.id == "mens" || c.id == "womens") {
                 button.textContent = document.querySelector(`label[for="${c.id}"]`).textContent;
             } else {
@@ -327,6 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (button.textContent == c.id) {
                     c.checked = false;
                 }
+                
                 applyFiltersAndSort(data);
             });
             
